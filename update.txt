@@ -28,4 +28,53 @@ Data is saved to `zameen_islamabad.csv` with no loss even if stopped manually.
 
 Next up: I’ll be analyzing the data with Pandas and working on a **Price Prediction ML model** based on Islamabad real estate trends 🚀
 
+
+Morning of Day 1---
+🧹 1. Cleaned the Raw Data
+
+Converted Price (e.g. "4.5 Crore") into numeric PKR values
+
+Converted Area (e.g. "2 Kanal", "10 Marla") into a single unit – Marla
+
+Added a new column: Price Per Marla
+
+Removed rows with invalid or missing prices/areas
+
+📄 Output saved as: zameen_islamabad_cleaned.csv
+
+📍 2. Location Breakdown
+
+Split vague Location into:
+
+Area
+
+Block
+
+Phase
+
+Sector
+
+📄 Output saved as: location_cleaned.csv
+
+🔗 3. Merged Cleaned Files
+
+Combined property data with location data
+
+Final column structure:
+Title, Price (PKR), Beds, Baths, Area (Marla), Price Per Marla, Area, Block, Phase, Sector
+
+📄 Output saved as: zameen_islamabad_model_ready.csv
+
+🧠 4. Model Building
+
+Replaced missing location values with "Unknown"
+
+Encoded location fields using OneHotEncoding
+
+Trained a Random Forest Regressor
+
+Evaluated model using MAE, RMSE, and R² Score
+
+
+
 ------------------Day 1 ends -------------
