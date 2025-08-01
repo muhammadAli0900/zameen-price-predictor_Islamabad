@@ -1,0 +1,31 @@
+---------------Day 1 -- 1 august 2025
+✅ Real Estate Scraper Dev Log — Islamabad 🇵🇰 | Zameen.com Project
+
+Today I set up a full-fledged web scraper using Selenium to collect housing data from Zameen.com — focused on listings in Islamabad.
+
+At first, things didn’t go smoothly…
+
+🔍 Issue:
+The script was skipping all listings despite no visible error in code. I double-checked the logic, the selectors, the loops — but still no data was being written to the CSV.
+
+😓 Turns out… I forgot to `Ctrl + V` the updated CSS selectors. That minor copy-paste miss made me panic for a bit and waste time debugging the wrong things.
+
+⚙️ Fixes & Steps I Took:
+- ✅ Updated my ChromeDriver to match the latest version of Chrome (the scraper wouldn’t even start before that)
+- ✅ Re-verified the DOM structure of Zameen.com by manually inspecting the title, price, beds, etc. and grabbed the **accurate class names**
+- ✅ Set up Selenium with `Options()` to avoid popups and ensure lazy-loaded listings would load after scrolling
+- ✅ Implemented graceful error handling — listings with missing fields are skipped, and progress is logged clearly
+
+📦 Output:
+- Title
+- Price
+- Location
+- Number of Beds
+- Baths
+- Area in Marla/Kanal
+
+Data is saved to `zameen_islamabad.csv` with no loss even if stopped manually.
+
+Next up: I’ll be analyzing the data with Pandas and working on a **Price Prediction ML model** based on Islamabad real estate trends 🚀
+
+------------------Day 1 ends -------------
