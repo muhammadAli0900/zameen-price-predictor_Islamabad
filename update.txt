@@ -1,22 +1,22 @@
 ---------------Day 1 -- 1 august 2025
-✅ Real Estate Scraper Dev Log — Islamabad 🇵🇰 | Zameen.com Project
+Real Estate Scraper Dev Log — Islamabad 🇵🇰 | Zameen.com Project
 
 Today I set up a full-fledged web scraper using Selenium to collect housing data from Zameen.com — focused on listings in Islamabad.
 
 At first, things didn’t go smoothly…
 
-🔍 Issue:
+Issue:
 The script was skipping all listings despite no visible error in code. I double-checked the logic, the selectors, the loops — but still no data was being written to the CSV.
 
-😓 Turns out… I forgot to `Ctrl + V` the updated CSS selectors. That minor copy-paste miss made me panic for a bit and waste time debugging the wrong things.
+Turns out… I forgot to `Ctrl + V` the updated CSS selectors. That minor copy-paste miss made me panic for a bit and waste time debugging the wrong things.
 
-⚙️ Fixes & Steps I Took:
-- ✅ Updated my ChromeDriver to match the latest version of Chrome (the scraper wouldn’t even start before that)
-- ✅ Re-verified the DOM structure of Zameen.com by manually inspecting the title, price, beds, etc. and grabbed the **accurate class names**
-- ✅ Set up Selenium with `Options()` to avoid popups and ensure lazy-loaded listings would load after scrolling
-- ✅ Implemented graceful error handling — listings with missing fields are skipped, and progress is logged clearly
+Fixes & Steps I Took:
+- Updated my ChromeDriver to match the latest version of Chrome (the scraper wouldn’t even start before that)
+- Re-verified the DOM structure of Zameen.com by manually inspecting the title, price, beds, etc. and grabbed the **accurate class names**
+- Set up Selenium with `Options()` to avoid popups and ensure lazy-loaded listings would load after scrolling
+- Implemented graceful error handling — listings with missing fields are skipped, and progress is logged clearly
 
-📦 Output:
+Output:
 - Title
 - Price
 - Location
@@ -30,19 +30,15 @@ Next up: I’ll be analyzing the data with Pandas and working on a **Price Predi
 
 
 Morning of Day 1---
-🧹 1. Cleaned the Raw Data
-
+1. Cleaned the Raw Data
 Converted Price (e.g. "4.5 Crore") into numeric PKR values
-
 Converted Area (e.g. "2 Kanal", "10 Marla") into a single unit – Marla
-
 Added a new column: Price Per Marla
-
 Removed rows with invalid or missing prices/areas
+Output saved as: zameen_islamabad_cleaned.csv
 
-📄 Output saved as: zameen_islamabad_cleaned.csv
 
-📍 2. Location Breakdown
+2. Location Breakdown
 
 Split vague Location into:
 
@@ -54,18 +50,18 @@ Phase
 
 Sector
 
-📄 Output saved as: location_cleaned.csv
+Output saved as: location_cleaned.csv
 
-🔗 3. Merged Cleaned Files
+3. Merged Cleaned Files
 
 Combined property data with location data
 
 Final column structure:
 Title, Price (PKR), Beds, Baths, Area (Marla), Price Per Marla, Area, Block, Phase, Sector
 
-📄 Output saved as: zameen_islamabad_model_ready.csv
+Output saved as: zameen_islamabad_model_ready.csv
 
-🧠 4. Model Building
+4. Model Building
 
 Replaced missing location values with "Unknown"
 
@@ -78,3 +74,61 @@ Evaluated model using MAE, RMSE, and R² Score
 
 
 ------------------Day 1 ends -------------
+---------------Day 2 -- 14 august 2025
+
+Today I worked through the final stages of the Real State Price prediction project (the Islamabad dataset). Here’s what I did and how the day progressed:
+
+Fixed path issues
+
+Ensured all scripts in src/ are path-safe when executed from the src/ folder. Updated file paths to use os.path.join(BASE_DIR, .., ...) pattern where needed.
+
+Confirmed dataset path: ../data/cleaned/zameen_islamabad_model_ready.csv when running from src/.
+
+Handled missing values properly
+
+Added median imputation for numeric features and most-frequent imputation for categorical features.
+
+Ensured the training pipeline contains SimpleImputer steps so evaluation and prediction won't crash on NaNs.
+
+Consolidated preprocessing + model into a pipeline
+
+Created and saved a full scikit-learn Pipeline (preprocessor + RandomForestRegressor) to ../models/best_model.pkl. This guarantees consistent preprocessing for training, evaluation, and prediction.
+
+Updated training script
+
+Finalized training_prediction_model.py to use the feature set: ['Beds', 'Baths', 'Area (Marla)', 'Block', 'Phase', 'Sector'].
+
+Set numeric & categorical transformers and trained with RandomForestRegressor. Evaluated on a hold-out test set and printed MAE/RMSE/R².
+
+Fixed evaluation script
+
+Made evalute_model.py load the exact same feature list and the saved pipeline from ../models/best_model.pkl.
+
+Added checks for missing columns and implemented the same safe missing-value handling before prediction.
+
+It writes data/processed/predictions.csv including actuals and predicted prices and prints MAE/RMSE/R².
+
+Built interactive prediction script
+
+Wrote predict_price.py that prompts customers for Area (Marla), Beds, Baths, and Sector.
+
+The script fills Price Per Marla, Block, and Phase from historical averages (sector-level) if the user doesn't provide them.
+
+Uses the saved pipeline to return a predicted price. Added option to loop later if necessary.
+
+Tested end-to-end
+
+Trained model successfully and confirmed best_model.pkl is in models/.
+
+Ran evalute_model.py and fixed remaining column mismatch and NaN errors by aligning features and imputers.
+
+Tested predict_price.py interactively — predictions return realistic values based on sector averages.
+
+Next steps (optional)
+
+Add lightweight input validation to predict_price.py (reject non-numeric entries, sensible ranges).
+
+Build a simple Streamlit or Flask UI to allow non-technical users to get predictions from a web page.
+
+Add unit tests for scraper, data_cleaning, and predict scripts.
+-----Day 2 ends

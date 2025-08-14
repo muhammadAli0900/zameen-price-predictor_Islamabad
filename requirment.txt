@@ -1,0 +1,6 @@
+pandas          # Data manipulation and cleaning
+numpy           # Numerical computations
+scikit-learn    # Machine learning model training and evaluation
+joblib          # Model saving and loading
+selenium        # Automated web browsing and scraping
+chromedriver-autoinstaller   # Automatically installs the correct ChromeDriver version

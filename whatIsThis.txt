@@ -1,0 +1,120 @@
+Project: Real State Price prediction (Zameen.com — Islamabad)
+
+Summary — what I built
+I designed and implemented a full machine-learning pipeline to predict property prices using scraped Zameen.com data. The project is structured to be reproducible, path-safe, and robust against missing values. I saved a single scikit-learn pipeline that includes preprocessing and the model so predictions always use the same transformations.
+
+Key folders & files (final structure)
+
+
+Real State Price prediction/
+│
+├── data/
+│   ├── raw/                    # raw scraped CSVs
+│   ├── cleaned/                # cleaned dataset: zameen_islamabad_model_ready.csv
+│   └── processed/              # outputs: predictions.csv
+│
+├── drivers/
+│   └── chromedriver.exe        # selenium chromedriver for scraper
+│
+├── models/
+│   └── best_model.pkl          # saved pipeline (preprocessing + model)
+│
+├── src/
+│   ├── scraper/                # scraping code (zameen_scraper.py)
+│   ├── data_cleaning/          # cleaning scripts (clean_data.py)
+│   ├── training_prediction_model.py  # trains pipeline and saves best_model.pkl
+│   ├── evalute_model.py        # loads saved pipeline, evaluates and saves predictions.csv
+│   └── predict_price.py        # interactive CLI for customer price predictions
+│
+├── requirements.txt
+├── README.md
+└── .gitignore
+
+What each important file does & concepts used
+
+src/scraper/zameen_scraper.py (concepts: Selenium, BeautifulSoup, ChromeDriver)
+
+Scrapes listings from Zameen.com and stores raw CSV files in data/raw/.
+
+Graceful handling for manual stops (Ctrl+C) so partial data is not lost.
+
+src/data_cleaning/clean_data.py (concepts: pandas data cleaning, dtype casting)
+
+Loads raw CSVs, drops irrelevant columns, normalizes column names, converts price and area to numeric types, and writes cleaned zameen_islamabad_model_ready.csv into data/cleaned/.
+
+Handles duplicates and obvious outliers.
+
+src/training_prediction_model.py (concepts: scikit-learn Pipeline, ColumnTransformer, SimpleImputer, OneHotEncoder, RandomForestRegressor, train_test_split, metrics)
+
+Loads data/cleaned/zameen_islamabad_model_ready.csv from project root.
+
+Selects feature set: ['Beds', 'Baths', 'Area (Marla)', 'Block', 'Phase', 'Sector'] and target Price (PKR).
+
+Numeric pipeline: SimpleImputer(strategy='median') for numbers.
+
+Categorical pipeline: SimpleImputer(strategy='most_frequent') + OneHotEncoder(handle_unknown='ignore').
+
+Full Pipeline = ColumnTransformer + RandomForestRegressor.
+
+Trains model, prints MAE/RMSE/R² on test split, and saves the whole pipeline to models/best_model.pkl using joblib.
+
+src/evalute_model.py (concepts: pipeline loading, prediction, metrics, saving outputs)
+
+Loads the saved pipeline from models/best_model.pkl.
+
+Loads the cleaned dataset and ensures exact feature columns match training.
+
+Uses the pipeline to predict and then computes MAE, RMSE, and R² for rows that have the actual price.
+
+Saves data/processed/predictions.csv combining actual and predicted prices for review.
+
+src/predict_price.py (concepts: interactive CLI, sector-level aggregation)
+
+Interactive script: asks user for Area (Marla), Beds, Baths, and Sector.
+
+Looks up the historical average Price Per Marla for the given sector from the cleaned dataset and uses sector mode() for Block and Phase if needed.
+
+Constructs a single-row DataFrame with the same column names as training, runs the saved pipeline, and prints the predicted price.
+
+Why I saved a pipeline (preprocessor + model)
+
+Ensures preprocessing (imputation, encoding) is identical during training, evaluation, and prediction.
+
+Prevents column-order and missing-value mismatches.
+
+Main Python libraries & tools used
+
+pandas — loading, cleaning, and manipulating tabular data.
+
+scikit-learn — Pipeline, ColumnTransformer, SimpleImputer, OneHotEncoder, RandomForestRegressor, and evaluation metrics.
+
+joblib — saving & loading the pipeline.
+
+selenium & ChromeDriver — scraping dynamic web pages (Zameen.com).
+
+matplotlib (optional) — for plotting evaluation visuals during development.
+
+How to run the main steps (from project src/ folder)
+
+Train (creates/overwrites models/best_model.pkl):
+
+python training_prediction_model.py
+
+Evaluate (writes data/processed/predictions.csv and prints metrics):
+
+python evalute_model.py
+
+Predict single property (interactive CLI):
+
+python predict_price.py
+
+Notes & recommendations
+
+Keep models/best_model.pkl and data/cleaned/zameen_islamabad_model_ready.csv in sync. If you change features, retrain and replace the model.
+
+Add input validation to the CLI before using in production.
+
+If deploying to a server, store chromedriver in a server-appropriate location and adapt the scraper to run headless.
+
+Add unit tests for the scraper and data cleaning steps to make the pipeline more robust.
+
