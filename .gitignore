@@ -1,0 +1,33 @@
+# Data files
+# Ignore raw and processed, keep cleaned
+data/raw/
+data/processed/
+data/cleaned/*.csv
+!data/cleaned/zameen_islamabad_model_ready.csv
+
+
+# Model
+models/*.pkl
+
+# Driver
+drivers/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.env
+venv/
+*.egg-info/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# OS
+.DS_Store
+Thumbs.db
+
+
+.txt
+update.txt
+whatIsThis.txt
